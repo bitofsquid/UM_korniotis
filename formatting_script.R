@@ -150,30 +150,59 @@ pop_emp <- pop_emp %>%
               select(Civ_Pop:index, -xYear)
 
 
-# Merge all data frames to create final data set
-
-merge_list <- list(nom_gdp1, 
-                   nom_gdp2, 
-                   nom_gdp3,
-                   pi1,
-                   pi2,
-                   pop_emp)
+# Merge data frames thus far to create a final data set [almost]
 
 final_data <- merge(nom_gdp1, merge(nom_gdp2, merge(nom_gdp3, merge(pi1, merge(pi2, pop_emp)))))
 final_data <- select(final_data, -index)
 
-# Write final dataset to the filepath specified above
+
+# Read in GDP release dates gleaned manually from news released schedules published by BEA
+# Merge with final_data; source URL (change year) = http://www.bea.gov/newsreleases/2016rd.htm
+
+release_dates_gdp <- read.csv(paste(filepath,"/release_dates_gdp.csv", sep = ""),
+                              header = TRUE,
+                              stringsAsFactors = FALSE)
+
+final_data <- mutate(final_data, qyear = paste(Quarter,Year, sep = ""))
+final_data$qyear <- as.integer(final_data$qyear)
+
+final_data <- merge(final_data, release_dates_gdp)
+
+
+# Read in personal income data scraped from BEA
+# Merge with final_data;source URL = "http://www.bea.gov/regional/histdata/"
+
+release_dates_pi <- read.csv(paste(filepath,"/release_dates_pi.csv", sep = ""),
+                             header = TRUE,
+                             stringsAsFactors = FALSE)
+
+final_data <- merge(final_data, release_dates_pi)
+
+
+# Read in unemployement release dates from BLS 
+# Merge; source URL = http://www.bls.gov/schedule/archives/laus_nr.htm#lau_0913_release
+
+release_dates_ue <- read.csv(paste(filepath,"/release_dates_ue.csv", sep = ""),
+                             header = TRUE,
+                             stringsAsFactors = FALSE)
+
+final_data <- merge(final_data, release_dates_ue)
+
+
+# Remove qyear index column and write to folder
+
+final_data <- select(final_data, -qyear)
 
 write.csv(final_data, paste(filepath, "/state_final_data.csv", sep = ""))
 
 
-# Create a key file with descriptive labels for column names in final dataset
+# Create key and footnotes files with descriptive labels for column names in final dataset
 
 keyname <- c("Federal Information Processing Standard Code",
              "State or Region Name",
              "Region Number",
-             "Year of corresponding data",
-             "Quarter of corresponding data",
+             "Year corresponding to the period covered by each data value",
+             "Quarter corresponding to the period covered by each data value",
              "Total GDP, All Industries (Millions of dollars, seasonally adjusted at annual rates)",
              "GDP, Private Industries",
              "GDP, Government",
@@ -185,12 +214,30 @@ keyname <- c("Federal Information Processing Standard Code",
              "Employed portion of labor force",
              "Employed portion of labor force, percent of population",
              "Unemployed portion of labor force",
-             "Unemployed portion of labor force, percent of population")
+             "Unemployed portion of labor force, percent of population",
+             "GDP: Release publication text",
+             "GDP: Scheduled date/time of publication release - BEA",
+             "GDP: Day of the week for each release date",
+             "PI: Release publication text",
+             "PI: Scheduled date/time of publication release - BEA",
+             "PI: Day of the week for each release date",
+             "UE: Release pulication text",
+             "UE: Scheduled date/time of publication release - BLS",
+             "UE: Day of the week for each release date")
+
+footnotes <- c("1) BLS - state employment figures are provided on a monthly basis. The data herein are the monthly releases taken at the end of each quarter.",
+               "2) BEA - Quarterly State GDP only became available on a quarterly basis from 2015 onwards. Prior to 2015, quarterly state GDP was provided annually as part of the annual state GDP release. Time stamps are for scheduled release dates. Actual release dates could vary.",
+               "3) Timestamps are in Eastern Standard Time (EST)",
+               "4) State list includes the District of Columbia")
 
 final_data_key <- data.frame(colname = colnames(final_data), 
                              keyname = keyname)
 
-# Write final dataset key to the filepath specified above
+final_data_footnotes <- data.frame(footnotes = footnotes)
+
+
+# Write final dataset key and footnotes files to the filepath specified above
 
 write.csv(final_data_key, paste(filepath, "/state_final_data_key.csv", sep = ""))
+write.csv(final_data_footnotes, paste(filepath, "/state_final_data_footnotes.csv", sep = ""))
 
