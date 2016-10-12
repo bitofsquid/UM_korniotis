@@ -1,9 +1,8 @@
 # UM_korniotis
 
-For the next year, I am studying at the University of Miami and while there will be assisting Dr. George Korniotis with a research project to investigate relationships with state-level economic data releases and movements in equity markets. 
+Over the next year, I will be conducting research alongside Dr. George Korniotis (http://bit.ly/2d6gd6f) exploring relationships between state level economic data releases and local stock returns. In research previously published by Dr. Korniotis and colleagues[1], a link was found that state economic data releases do tend to impact local stock returns. Specifically, the study finds that "local stock prices decline and average future returns...rise during local recessions as local risk aversion increases and local risk sharing abilities decline." Our work now will focus on refining these findings in an attempt to formulate potential trading strategies to capitalize on this phenomenon.
 
-This script gathers and formats data from the Beareau of Economic Analysis and the Beaureau of Labor Statistics. Although the purpose of the script isn't very glamorous, it turned out to be more of an ambitous endeavor than I originally anticipated but was an awesome learning experience. 
+The R script within this repo gathers and formats data from the Beareau of Economic Analysis and the Beaureau of Labor Statistics. Most of the data was gathered and formatted programmatically in R, however, there were portions that were done manually in Microsoft Excel (e.g. I opted to gather release times and dates manually due to my rather modest webscraping abilities).
 
-The script has a bit of tidyr, dplyr, and even a touch of very primitive web scraping. Similar to my other projects, this one also is probably not very elegant, but it got the job done. Will try to add in the other aspects of the project that aren't confidential as the research effort continues.
 
-Thanks for taking a look.
+[1] State-Level Business Cycles and Local Return Predictability, with A. Kumar; Journal of Finance, 2013, 68(3), 1037-1096;featured in New York Times (June 15, 2008) and Minneapolis Star Tribune (June 22, 2008)
